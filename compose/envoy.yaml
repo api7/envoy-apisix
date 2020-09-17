@@ -1,0 +1,88 @@
+static_resources:
+  listeners:
+  - name: main
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8000
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+          stat_prefix: ingress_http
+          codec_type: auto
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: web_service
+          http_filters:
+          - name: envoy.filters.http.lua
+            typed_config:
+              "@type": type.googleapis.com/envoy.config.filter.http.lua.v2.Lua
+              inline_code: |
+                local core = require("apisix.core")
+
+                function envoy_on_request(request_handle)
+                  -- Make an HTTP call.
+                  local headers, body = request_handle:httpCall(
+                  "lua_cluster",
+                  {
+                    [":method"] = "POST",
+                    [":path"] = "/",
+                    [":authority"] = "lua_cluster",
+                    ["set-cookie"] = { "lang=lua; Path=/", "type=binding; Path=/" }
+                  },
+                  "hello world",
+                  5000)
+
+                  -- Response directly and set a header from the HTTP call. No further filter iteration
+                  -- occurs.
+                  request_handle:respond(
+                    {[":status"] = "403",
+                    ["upstream_foo"] = headers["foo"]},
+                    "nope")
+                end
+
+                function envoy_on_response(response_handle)
+                  body_size = response_handle:body():length()
+                  response_handle:headers():add("response-body-size", tostring(body_size))
+                  response_handle:headers():add("Location", "http://apisix.dev")
+                  response_handle:headers():replace(":status", 302)
+                  response_handle:headers():add("sss", core.test())
+
+                  response_handle:respond(
+                    {[":status"] = "302",
+                    ["upstream_foo"] = headers["foo"]},
+                    "nope")
+                end
+          - name: envoy.filters.http.router
+            typed_config: {}
+
+  clusters:
+  - name: web_service
+    connect_timeout: 0.25s
+    type: strict_dns # static
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: web_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: web_service
+                port_value: 80
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
