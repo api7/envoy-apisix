@@ -31,36 +31,10 @@ static_resources:
                 local core = require("apisix.core")
 
                 function envoy_on_request(request_handle)
-                  -- Make an HTTP call.
-                  local headers, body = request_handle:httpCall(
-                  "lua_cluster",
-                  {
-                    [":method"] = "POST",
-                    [":path"] = "/",
-                    [":authority"] = "lua_cluster",
-                    ["set-cookie"] = { "lang=lua; Path=/", "type=binding; Path=/" }
-                  },
-                  "hello world",
-                  5000)
-
-                  -- Response directly and set a header from the HTTP call. No further filter iteration
-                  -- occurs.
                   request_handle:respond(
-                    {[":status"] = "403",
-                    ["upstream_foo"] = headers["foo"]},
-                    "nope")
-                end
-
-                function envoy_on_response(response_handle)
-                  body_size = response_handle:body():length()
-                  response_handle:headers():add("response-body-size", tostring(body_size))
-                  response_handle:headers():add("Location", "http://apisix.dev")
-                  response_handle:headers():replace(":status", 302)
-                  response_handle:headers():add("sss", core.test())
-
-                  response_handle:respond(
                     {[":status"] = "302",
-                    ["upstream_foo"] = headers["foo"]},
+                    ["Location"] = "http://apisix.dev",
+                    ["server"] = core.test()},
                     "nope")
                 end
           - name: envoy.filters.http.router
