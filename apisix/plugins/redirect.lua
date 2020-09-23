@@ -17,8 +17,14 @@
 local core = require("apisix.core")
 local tab_insert = table.insert
 local tab_concat = table.concat
-local re_gmatch  = string.gmatch
+local re_gmatch = string.gmatch
 local ipairs = ipairs
+
+
+-- can't use lrucache currently
+-- local lrucache = core.lrucache.new({
+--     ttl = 300, count = 100
+-- })
 
 
 local schema = {
@@ -46,7 +52,7 @@ local _M = {
 
 
 local function parse_uri(uri)
-
+    -- regular expression doesn't work here now
     local reg = [[ (\\\$[0-9a-zA-Z_]+) | ]]         -- \$host
                 .. [[ \$\{([0-9a-zA-Z_]+)\} | ]]    -- ${host}
                 .. [[ \$([0-9a-zA-Z_]+) | ]]        -- $host
@@ -93,7 +99,7 @@ end
 
     local tmp = {}
 local function concat_new_uri(uri, ctx)
-    local passed_uri_segs, err = parse_uri(uri)
+    local passed_uri_segs, err = lrucache(uri, nil, parse_uri, uri)
     if not passed_uri_segs then
         return nil, err
     end
@@ -129,12 +135,21 @@ function _M.rewrite(conf, ctx, handler)
     end
 
     if uri and ret_code then
+        -- local new_uri, err = concat_new_uri(uri, ctx)
+        -- if not new_uri then
+        --     core.log.error("failed to generate new uri by: ", uri, " error: ",
+        --                    err)
+        --     return 500
+        -- end
+
         handler:respond(
             {[":status"] = ret_code,
             ["Location"] = uri,
             ["server"] = "apisix"},
 
             "nope")
+
+
         return ret_code
     end
 end

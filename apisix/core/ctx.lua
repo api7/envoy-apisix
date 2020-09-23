@@ -16,7 +16,8 @@
 --
 local _M = {version = 0.2}
 
-
+--- Note: envoy doesn't support context for lua currently. using a global var as ctx temporarily.
+--- TODO: need a better implement and more vars
 local var = {}
 function _M.set_vars_meta(ctx, handler)
     table.clear(var)

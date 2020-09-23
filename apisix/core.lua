@@ -20,6 +20,6 @@ return {
     table    = require("apisix.core.table"),
     string   = require("apisix.core.string"),
     ctx      = require("apisix.core.ctx"),
-    json     = require("apisix.core.json"),
+    json     = require("apisix.core.json"),   -- need a better json lib
     empty_tab= {},
 }
