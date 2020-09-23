@@ -29,14 +29,25 @@ static_resources:
               "@type": type.googleapis.com/envoy.config.filter.http.lua.v2.Lua
               inline_code: |
                 local core = require("apisix.core")
+                local ctx = {}
 
                 function envoy_on_request(request_handle)
-                  request_handle:respond(
-                    {[":status"] = "302",
-                    ["Location"] = "http://apisix.dev",
-                    ["server"] = core.test()},
-                    "nope")
+                  ctx.test = "a"
+                  core.ctx.set_vars_meta(ctx, request_handle)
+
+                  local ok, redirect = pcall(require, "apisix.plugins.redirect")
+                  local phase_func = redirect.rewrite
+                  local conf = {ret_code = 302, uri = "/redirect/fdsdf"}
+                  phase_func(conf, ctx, request_handle)
                 end
+
+                function envoy_on_response(response_handle)
+                  if ctx and ctx.var then
+                    for key, value in pairs(ctx.var) do
+                      response_handle:logWarn("ctx key:" .. key .. " value: " .. value)
+                    end                 
+                  end  
+                end                
           - name: envoy.filters.http.router
             typed_config: {}
 

@@ -14,12 +14,6 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 --
-
 return {
-    version  = require("apisix.core.version"),
-    table    = require("apisix.core.table"),
-    string   = require("apisix.core.string"),
-    ctx      = require("apisix.core.ctx"),
-    json     = require("apisix.core.json"),
-    empty_tab= {},
+    VERSION = "1.5"
 }

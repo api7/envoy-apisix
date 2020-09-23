@@ -14,12 +14,28 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 --
+local _M = {version = 0.2}
 
-return {
-    version  = require("apisix.core.version"),
-    table    = require("apisix.core.table"),
-    string   = require("apisix.core.string"),
-    ctx      = require("apisix.core.ctx"),
-    json     = require("apisix.core.json"),
-    empty_tab= {},
-}
+
+local var = {}
+function _M.set_vars_meta(ctx, handler)
+    table.clear(var)
+    local headers = handler:headers()
+    for key, value in pairs(headers) do
+        if key == ":authority" then
+            var.host = value
+        elseif key == ":path" then
+            var.request_uri = value
+        elseif key == ":method" then
+            var.method = value
+        elseif key == "x-forwarded-proto" then
+            var.schema = value
+        else
+            var[key] = value
+        end
+    end
+    ctx.var = var
+end
+
+
+return _M
