@@ -17,10 +17,12 @@
 local core = require("apisix.core")
 local tab_insert = table.insert
 local tab_concat = table.concat
+-- need to implement core.re
 local re_gmatch = string.gmatch
 local ipairs = ipairs
 
 
+-- need to implement core.log
 -- can't use lrucache currently
 -- local lrucache = core.lrucache.new({
 --     ttl = 300, count = 100
@@ -81,6 +83,7 @@ end
 
 
 function _M.check_schema(conf)
+    -- not works now. need to implement core.schema
     local ok, err = core.schema.check(schema, conf)
     if not ok then
         return false, err
@@ -142,6 +145,7 @@ function _M.rewrite(conf, ctx, handler)
         --     return 500
         -- end
 
+        -- todo 
         handler:respond(
             {[":status"] = ret_code,
             ["Location"] = uri,
@@ -149,6 +153,8 @@ function _M.rewrite(conf, ctx, handler)
 
             "nope")
 
+        --- need to implement core.respond
+        -- core.response.set_header("Location", new_uri)
 
         return ret_code
     end
