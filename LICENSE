@@ -202,6 +202,6 @@
 
 =======================================================================
 
-files in `compose/` is based on https://github.com/envoyproxy/envoy/tree/master/examples/lua 
+files in `compose/` are based on https://github.com/envoyproxy/envoy/tree/master/examples/lua 
 
 which is provided under the Apache 2.0 license. See the link for details.
