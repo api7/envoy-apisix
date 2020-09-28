@@ -199,3 +199,9 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+=======================================================================
+
+files in `compose/` is based on https://github.com/envoyproxy/envoy/tree/master/examples/lua 
+
+which is provided under the Apache 2.0 license. See the link for details.
