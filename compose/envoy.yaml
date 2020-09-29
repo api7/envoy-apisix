@@ -37,7 +37,7 @@ static_resources:
 
                   local ok, redirect = pcall(require, "apisix.plugins.redirect")
                   local phase_func = redirect.rewrite
-                  local conf = {ret_code = 302, uri = "/redirect/fdsdf"}
+                  local conf = {ret_code = 302, uri = "/redirected/path"}
                   phase_func(conf, ctx, request_handle)
                 end
 
