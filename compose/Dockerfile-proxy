@@ -1,5 +1,6 @@
 FROM envoyproxy/envoy-dev:latest
 ADD apisix/core.lua /apisix/core.lua
+ADD apisix/entry.lua /apisix/entry.lua
 COPY apisix/core/ /apisix/core/
 COPY apisix/plugins/ /apisix/plugins/
 COPY compose/envoy.yaml /etc/envoy.yaml
