@@ -20,7 +20,7 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: "/hello"
+                  prefix: "/foo"
                 route:
                   cluster: web_service
                 typed_per_filter_config:
@@ -30,7 +30,29 @@ static_resources:
                 metadata:
                   filter_metadata:
                     envoy.filters.http.lua:
-                      foo: bar11
+                      plugins: 
+                      - name: uri-blocker
+                        conf:
+                          ret_code: 302
+                          block_rules: 
+                          - root.exe
+                          - root.m+
+              - match:
+                  prefix: "/bar"
+                route:
+                  cluster: web_service
+                typed_per_filter_config:
+                  envoy.filters.http.lua:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                    name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      plugins: 
+                      - name: redirect
+                        conf:
+                          ret_code: 301
+                          uri: "/redirected/path"
               - match:
                   prefix: "/"
                 route:
@@ -62,7 +84,7 @@ static_resources:
   clusters:
   - name: web_service
     connect_timeout: 0.25s
-    type: strict_dns # static
+    type: strict_dns
     lb_policy: round_robin
     load_assignment:
       cluster_name: web_service
