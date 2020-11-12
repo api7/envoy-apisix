@@ -27,6 +27,10 @@ static_resources:
                   envoy.filters.http.lua:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                     name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      foo: bar11
               - match:
                   prefix: "/"
                 route:
