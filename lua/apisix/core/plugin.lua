@@ -50,7 +50,18 @@ function _M.run(ctx, plugins)
                 local phase_func = plugin_object[phase_name]
                 if phase_func then
                     local conf = plugin.conf
-                    phase_func(conf, ctx) 
+                    local status, body = phase_func(conf, ctx)
+                    handle:logWarn("phase_name:" .. phase_name)
+                    handle:logWarn("status" .. status)
+                    if status then
+                        handle:logWarn("resp")
+                        handle:respond(
+                            {[":status"] = status,
+                            -- ["Location"] = uri,
+                            ["server"] = "apisix"},
+                            body or "" )
+                        return
+                    end
                 end
             end
         end

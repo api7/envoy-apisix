@@ -21,6 +21,7 @@ return {
     string   = require("apisix.core.string"),
     ctx      = require("apisix.core.ctx"),
     plugin   = require("apisix.core.plugin"),
+    -- schema   = require("apisix.core.schema"),
     json     = require("apisix.core.json"),   -- need a better json lib
     empty_tab= {},
 }

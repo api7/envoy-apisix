@@ -15,8 +15,8 @@
 -- limitations under the License.
 --
 local core = require("apisix.core")
-local re_compile = require("resty.core.regex").re_match_compile
-local re_find = ngx.re.find
+-- local re_compile = require("resty.core.regex").re_match_compile
+local re_find = string.find -- ngx.re.find
 local ipairs = ipairs
 
 local schema = {
@@ -71,8 +71,8 @@ end
 
 
 function _M.rewrite(conf, ctx)
-    core.log.info("uri: ", ctx.var.request_uri)
-    core.log.info("block uri rules: ", conf.block_rules_concat)
+    -- core.log.info("uri: ", ctx.var.request_uri)
+    -- core.log.info("block uri rules: ", conf.block_rules_concat)
 
     if not conf.block_rules_concat then
         local block_rules = {}
@@ -81,10 +81,16 @@ function _M.rewrite(conf, ctx)
         end
 
         conf.block_rules_concat = core.table.concat(block_rules, "|")
-        core.log.info("concat block_rules: ", conf.block_rules_concat)
+        -- core.log.info("concat block_rules: ", conf.block_rules_concat)
     end
 
-    local from = re_find(ctx.var.request_uri, conf.block_rules_concat, "jo")
+    local handle = ctx.handle
+    handle:logWarn("request_uri:" .. ctx.var.request_uri .. " conf.block_rules_concat: " .. conf.block_rules_concat)
+
+    local from = re_find(ctx.var.request_uri, "[" .. conf.block_rules_concat .. "]") -- , "jo"
+
+    handle:logWarn("from:" .. from)
+
     if from then
         return conf.rejected_code
     end

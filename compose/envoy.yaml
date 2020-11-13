@@ -33,7 +33,7 @@ static_resources:
                       plugins: 
                       - name: uri-blocker
                         conf:
-                          ret_code: 302
+                          rejected_code: 302
                           block_rules: 
                           - root.exe
                           - root.m+
