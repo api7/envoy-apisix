@@ -58,24 +58,13 @@ static_resources:
                 route:
                   cluster: web_service
           http_filters:
-          - name: envoy.lua
+          - name: entry.lua
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
                 function envoy_on_request(request_handle)
                 end
-                function envoy_on_response(response_handle)
-                end
               source_codes:
-                hello.lua:
-                  inline_string: |
-                    function envoy_on_request(request_handle)
-                      request_handle:logInfo("hello:foo")
-                    end
-                    function envoy_on_response(response_handle)
-                      response_handle:logInfo("hello:bar")
-                      response_handle:headers():add("hello:ok", "1")
-                    end
                 entry.lua:
                   filename: /apisix/entry.lua
           - name: envoy.router
