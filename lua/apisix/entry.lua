@@ -12,19 +12,6 @@ function envoy_on_request(request_handle)
   ctx.handle = request_handle
 
   core.plugin.run(ctx, plugins)
-
---   local plugin_name = ""
---   if #plugins > 0 then
---       for key, plugin_conf in pairs(plugins) do
---         plugin_name = plugin_conf.name
---         request_handle:logWarn("plugin name:" .. plugin_conf.name .. " key: " .. key)
---       end
---   end
-
---   local ok, redirect = pcall(require, "apisix.plugins.redirect")
---   local phase_func = redirect.rewrite
---   local conf = {ret_code = 302, uri = "/redirected/path-" .. plugin_name}
---   phase_func(conf, ctx, request_handle)
 end
 
 function envoy_on_response(response_handle)
