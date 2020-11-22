@@ -126,9 +126,10 @@ local function concat_new_uri(uri, ctx)
 end
 
 
-function _M.rewrite(conf, ctx, handler)
+function _M.rewrite(conf, ctx)
     local ret_code = conf.ret_code
     local uri = conf.uri
+    local handle = ctx.handle
 
     if conf.http_to_https and ctx.var.scheme == "http" then
         -- TODO： add test case
@@ -146,7 +147,7 @@ function _M.rewrite(conf, ctx, handler)
         -- end
 
         -- todo 
-        handler:respond(
+        handle:respond(
             {[":status"] = ret_code,
             ["Location"] = uri,
             ["server"] = "apisix"},

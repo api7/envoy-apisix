@@ -7,9 +7,9 @@ static_resources:
         port_value: 8000
     filter_chains:
     - filters:
-      - name: envoy.filters.network.http_connection_manager
+      - name: envoy.http_connection_manager
         typed_config:
-          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
           stat_prefix: ingress_http
           codec_type: auto
           route_config:
@@ -20,41 +20,60 @@ static_resources:
               - "*"
               routes:
               - match:
+                  prefix: "/foo"
+                route:
+                  cluster: web_service
+                typed_per_filter_config:
+                  envoy.filters.http.lua:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                    name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      plugins: 
+                      - name: uri-blocker
+                        conf:
+                          rejected_code: 403
+                          block_rules: 
+                          - root.exe
+                          - root.m+
+              - match:
+                  prefix: "/bar"
+                route:
+                  cluster: web_service
+                typed_per_filter_config:
+                  envoy.filters.http.lua:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                    name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      plugins: 
+                      - name: redirect
+                        conf:
+                          ret_code: 301
+                          uri: "/redirected/path"
+              - match:
                   prefix: "/"
                 route:
                   cluster: web_service
           http_filters:
-          - name: envoy.filters.http.lua
+          - name: entry.lua
             typed_config:
-              "@type": type.googleapis.com/envoy.config.filter.http.lua.v2.Lua
+              "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
               inline_code: |
-                local core = require("apisix.core")
-                local ctx = {}
-
                 function envoy_on_request(request_handle)
-                  ctx.test = "a"
-                  core.ctx.set_vars_meta(ctx, request_handle)
-
-                  local ok, redirect = pcall(require, "apisix.plugins.redirect")
-                  local phase_func = redirect.rewrite
-                  local conf = {ret_code = 302, uri = "/redirected/path"}
-                  phase_func(conf, ctx, request_handle)
                 end
-
-                function envoy_on_response(response_handle)
-                  if ctx and ctx.var then
-                    for key, value in pairs(ctx.var) do
-                      response_handle:logWarn("ctx key:" .. key .. " value: " .. value)
-                    end                 
-                  end  
-                end                
-          - name: envoy.filters.http.router
+              source_codes:
+                entry.lua:
+                  filename: /apisix/entry.lua
+          - name: envoy.router
             typed_config: {}
 
   clusters:
   - name: web_service
     connect_timeout: 0.25s
-    type: strict_dns # static
+    type: strict_dns
     lb_policy: round_robin
     load_assignment:
       cluster_name: web_service
