@@ -53,6 +53,25 @@ static_resources:
                         conf:
                           ret_code: 301
                           uri: "/redirected/path"
+
+              - match:
+                  prefix: "/hello"
+                route:
+                  cluster: web_service
+                typed_per_filter_config:
+                  envoy.filters.http.lua:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                    name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      plugins: 
+                      - name: referer-restriction
+                        conf:
+                          bypass_missing: false
+                          whitelist:
+                            - "127.0.0.1"
+
               - match:
                   prefix: "/"
                 route:

@@ -16,12 +16,15 @@
 --
 
 return {
-    version  = require("apisix.core.version"),
-    table    = require("apisix.core.table"),
-    string   = require("apisix.core.string"),
     ctx      = require("apisix.core.ctx"),
-    plugin   = require("apisix.core.plugin"),
-    -- schema   = require("apisix.core.schema"),
     json     = require("apisix.core.json"),   -- need a better json lib
+    lrucache = require("apisix.core.lrucache"),
+    plugin   = require("apisix.core.plugin"),
+    re       = require("apisix.core.re"),
+    schema   = require("apisix.schema_def"),
+    string   = require("apisix.core.string"),
+    table    = require("apisix.core.table"),
+    version  = require("apisix.core.version"),
+
     empty_tab= {},
 }
