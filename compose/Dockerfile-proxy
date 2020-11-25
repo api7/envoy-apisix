@@ -1,5 +1,6 @@
 FROM envoyproxy/envoy-dev:latest
 ADD lua/apisix/ /apisix/
+ADD lua/deps/ /usr/local/share/lua/5.1/
 COPY compose/envoy.yaml /etc/envoy.yaml
 RUN chmod go+r /etc/envoy.yaml /apisix/core.lua
 CMD /usr/local/bin/envoy -c /etc/envoy.yaml -l debug --service-cluster proxy

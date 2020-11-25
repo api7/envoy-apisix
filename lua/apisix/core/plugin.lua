@@ -16,6 +16,7 @@
 --
 local _M = {version = 0.2}
 
+local json_encode = require("apisix.core.json").encode
 
 function _M.run(ctx, plugins)
     local handle = ctx.handle
@@ -55,6 +56,9 @@ function _M.run(ctx, plugins)
                     handle:logWarn("status" .. status)
                     if status then
                         handle:logWarn("resp")
+                        if type(body) == "table" then
+                            body = json_encode(body)
+                        end
                         handle:respond(
                             {[":status"] = status,
                             -- ["Location"] = uri,
@@ -64,6 +68,8 @@ function _M.run(ctx, plugins)
                     end
                 end
             end
+        else
+            handle:logWarn("fail to load plugin:" .. plugin.name)
         end
     end
 

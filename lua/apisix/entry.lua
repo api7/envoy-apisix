@@ -1,5 +1,4 @@
 local core = require("apisix.core")
-local plugin = require("apisix.core.plugin")
 local ctx = {}
 
 function envoy_on_request(request_handle)
