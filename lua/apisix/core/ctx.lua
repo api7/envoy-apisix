@@ -16,6 +16,24 @@
 --
 local _M = {version = 0.2}
 
+
+local function get_client_ip(handler)
+    local streamInfo = handler:streamInfo()
+    if not streamInfo then
+        return nil
+    end
+
+    local ip = streamInfo:downstreamLocalAddress()
+    if ip then
+        return ip
+    end
+
+    ip = streamInfo:downstreamDirectRemoteAddress()
+    if ip then
+        return ip
+    end
+end
+
 --- Note: envoy doesn't support context for lua currently. using a global var as ctx temporarily.
 --- TODO: need a better implement and more vars
 local var = {}
@@ -35,6 +53,9 @@ function _M.set_vars_meta(ctx, handler)
             var[key] = value
         end
     end
+
+    var.remote_addr = get_client_ip(handler)
+
     ctx.var = var
 end
 
