@@ -29,8 +29,8 @@ function _M.set_vars_meta(ctx, handler)
             var.request_uri = value
         elseif key == ":method" then
             var.method = value
-        elseif key == "x-forwarded-proto" then
-            var.schema = value
+        elseif key == ":scheme" or key == "x-forwarded-proto" then
+            var.scheme = value
         else
             var[key] = value
         end
