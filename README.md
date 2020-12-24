@@ -3,7 +3,6 @@
 A Lua framework that support [Apache APISIX](https://github.com/apache/apisix) plugins run directly in [Envoy](https://github.com/envoyproxy/envoy) Lua filter without modify Envoy.
 
 
-
 # Example
 
 1. clone the code
@@ -28,6 +27,13 @@ server: envoy
 content-length: 0
 date: Wed, 18 Nov 2020 00:08:54 GMT
 ```
+
+
+# Plugins
+
+* [redirect](plugins/redirect.md): URI redirect.
+* [referer-restriction](plugins/referer-restriction.md): Referer whitelist.
+* [uri-blocker](plugins/uri-blocker.md): Block client request by URI.
 
 
 # How does it works
