@@ -36,7 +36,7 @@ date: Wed, 18 Nov 2020 00:08:54 GMT
 * [uri-blocker](plugins/uri-blocker.md): Block client request by URI.
 
 
-# How does it works
+# How does it work
 
 We shield platform differences for the plugin layer. All interfaces that need to be used are abstracted in the underlying framework, which we call apisix.core, so that all plugins can run on Envoy and Apache APISIX at the same time.
 
