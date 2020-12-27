@@ -1,0 +1,28 @@
+name: CLI Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: run docker compose
+        working-directory: ./example
+        run: |
+          docker-compose up -d
+          sleep 5
+          docker logs example_proxy_1
+
+      - name: run test
+        working-directory: ./api
+        run: sudo ./test/shell/cli_test.sh
+
