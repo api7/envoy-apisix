@@ -34,6 +34,7 @@ date: Wed, 18 Nov 2020 00:08:54 GMT
 * [redirect](plugins/redirect.md): URI redirect.
 * [referer-restriction](plugins/referer-restriction.md): Referer whitelist.
 * [uri-blocker](plugins/uri-blocker.md): Block client request by URI.
+* [ip-restriction](plugins/ip-restriction.md): restrict access by IP addresses.
 
 
 # How does it work
