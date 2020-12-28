@@ -31,10 +31,10 @@ date: Wed, 18 Nov 2020 00:08:54 GMT
 
 # Plugins
 
-* [redirect](plugins/redirect.md): URI redirect.
-* [referer-restriction](plugins/referer-restriction.md): Referer whitelist.
-* [uri-blocker](plugins/uri-blocker.md): Block client request by URI.
-* [ip-restriction](plugins/ip-restriction.md): restrict access by IP addresses.
+* [redirect](docs/plugins/redirect.md): URI redirect.
+* [referer-restriction](docs/plugins/referer-restriction.md): Referer whitelist.
+* [uri-blocker](docs/plugins/uri-blocker.md): Block client request by URI.
+* [ip-restriction](docs/plugins/ip-restriction.md): restrict access by IP addresses.
 
 
 # How does it work
