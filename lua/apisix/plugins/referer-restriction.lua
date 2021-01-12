@@ -92,7 +92,7 @@ function _M.access(conf, ctx)
     local block = false
     local referer = ctx.var.referer
     local handle = ctx.handle
-    handle:logWarn("referer:" .. referer)
+
     if referer then
         -- parse_uri doesn't support IPv6 literal, it is OK since we only
         -- expect hostname in the whitelist.
@@ -105,10 +105,8 @@ function _M.access(conf, ctx)
             -- take host part only
             referer = uri.host
         end
+        handle:logWarn("referer parsed:" .. referer)
     end
-
-    handle:logWarn("referer parsed:" .. referer)
-
 
     if not referer then
         block = not conf.bypass_missing
