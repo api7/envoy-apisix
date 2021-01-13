@@ -15,13 +15,11 @@
 -- limitations under the License.
 --
 
--- local lru_new = require("resty.lrucache").new
+local lru_new = require("resty.lrucache").new
 -- local resty_lock = require("resty.lock")
 -- local log = require("apisix.core.log")
--- local tostring = tostring
--- local concat = table.concat
--- local ngx = ngx
--- local get_phase = ngx.get_phase
+local tostring = tostring
+local concat = table.concat
 
 
 -- local lock_shdict_name = "lrucache-lock"
@@ -65,79 +63,53 @@ local function fetch_valid_cache(lru_obj, invalid_stale, item_ttl,
     return nil
 end
 
--- fake
+
 local function new_lru_fun(opts)
-    return function (key, version, create_obj_fun, ...)
-        local obj, err = create_obj_fun(...)
-        return obj, err
+    local item_count, item_ttl
+    if opts and opts.type == 'plugin' then
+        item_count = opts.count or PLUGIN_ITEMS_COUNT
+        item_ttl = opts.ttl or PLUGIN_TTL
+    else
+        item_count = opts and opts.count or GLOBAL_ITEMS_COUNT
+        item_ttl = opts and opts.ttl or GLOBAL_TTL
     end
 
-    -- local item_count, item_ttl
-    -- if opts and opts.type == 'plugin' then
-    --     item_count = opts.count or PLUGIN_ITEMS_COUNT
-    --     item_ttl = opts.ttl or PLUGIN_TTL
-    -- else
-    --     item_count = opts and opts.count or GLOBAL_ITEMS_COUNT
-    --     item_ttl = opts and opts.ttl or GLOBAL_TTL
-    -- end
+    local item_release = opts and opts.release
+    local invalid_stale = opts and opts.invalid_stale
+    local serial_creating = opts and opts.serial_creating
+    local lru_obj = lru_new(item_count)
 
-    -- local item_release = opts and opts.release
-    -- local invalid_stale = opts and opts.invalid_stale
-    -- local serial_creating = opts and opts.serial_creating
-    -- local lru_obj = lru_new(item_count)
+    return function (key, version, create_obj_fun, ...)
+        -- local lock, err = resty_lock:new(lock_shdict_name)
+        -- if not lock then
+        --     return nil, "failed to create lock: " .. err
+        -- end
 
-    -- return function (key, version, create_obj_fun, ...)
-    --     if not serial_creating or not can_yield_phases[get_phase()] then
-    --         local cache_obj = fetch_valid_cache(lru_obj, invalid_stale,
-    --                             item_ttl, item_release, key, version)
-    --         if cache_obj then
-    --             return cache_obj.val
-    --         end
+        -- local key_s = tostring(key)
+        -- log.info("try to lock with key ", key_s)
 
-    --         local obj, err = create_obj_fun(...)
-    --         if obj ~= nil then
-    --             lru_obj:set(key, {val = obj, ver = version}, item_ttl)
-    --         end
+        -- local elapsed, err = lock:lock(key_s)
+        -- if not elapsed then
+        --     return nil, "failed to acquire the lock: " .. err
+        -- end
 
-    --         return obj, err
-    --     end
+        cache_obj = fetch_valid_cache(lru_obj, invalid_stale, item_ttl,
+                        nil, key, version)
+        if cache_obj then
+            -- lock:unlock()
+            -- log.info("unlock with key ", key_s)
+            return cache_obj.val
+        end
 
-    --     local cache_obj = fetch_valid_cache(lru_obj, invalid_stale, item_ttl,
-    --                         item_release, key, version)
-    --     if cache_obj then
-    --         return cache_obj.val
-    --     end
+        local obj, err = create_obj_fun(...)
+        if obj ~= nil then
+            lru_obj:set(key, {val = obj, ver = version}, item_ttl)
+        end
+        -- lock:unlock()
+        -- log.info("unlock with key ", key_s)
 
-    --     local lock, err = resty_lock:new(lock_shdict_name)
-    --     if not lock then
-    --         return nil, "failed to create lock: " .. err
-    --     end
-
-    --     local key_s = tostring(key)
-    --     log.info("try to lock with key ", key_s)
-
-    --     local elapsed, err = lock:lock(key_s)
-    --     if not elapsed then
-    --         return nil, "failed to acquire the lock: " .. err
-    --     end
-
-    --     cache_obj = fetch_valid_cache(lru_obj, invalid_stale, item_ttl,
-    --                     nil, key, version)
-    --     if cache_obj then
-    --         lock:unlock()
-    --         log.info("unlock with key ", key_s)
-    --         return cache_obj.val
-    --     end
-
-    --     local obj, err = create_obj_fun(...)
-    --     if obj ~= nil then
-    --         lru_obj:set(key, {val = obj, ver = version}, item_ttl)
-    --     end
-    --     lock:unlock()
-    --     log.info("unlock with key ", key_s)
-
-    --     return obj, err
-    -- end
+        return obj, err
+    end
 end
 
 
