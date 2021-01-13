@@ -22,7 +22,14 @@ jobs:
           sleep 5
           docker logs example_proxy_1
 
-      - name: run test
-        working-directory: ./api
-        run: sudo ./test/shell/cli_test.sh
+      - uses: actions/setup-python@v1
+      
+      - uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            pytest
+            requests
 
+      - name: run test
+        working-directory: ./test/cases
+        run: py.test

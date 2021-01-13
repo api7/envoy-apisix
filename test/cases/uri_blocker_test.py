@@ -24,16 +24,9 @@ class TestUriBlocker(object):
         path = "/foo"
         params = {"name": "root.exe"}        
         r = requests.request("GET", url = host + path, params = params)
-        print(r.text)
-        # response = r.json()
         assert r.status_code == 403
 
     def test_not_blocked(self):
         host = base.test_host()
         path = "/foo"
         r = requests.request("GET", url = host + path)
-        print(r.text)
-        # response = r.json()
-        # assert r.status_code == 200
-        # assert response["start"] == params["start"]
-        # assert response["title"] == "正在上映的电影-上海", "实际的标题是：{}".format(response["title"])
