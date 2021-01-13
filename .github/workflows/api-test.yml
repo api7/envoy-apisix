@@ -1,0 +1,35 @@
+name: API Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: run docker compose
+        working-directory: ./example
+        run: |
+          docker-compose up -d
+          sleep 5
+          docker logs example_proxy_1
+
+      - uses: actions/setup-python@v1
+      
+      - uses: BSFishy/pip-action@v1
+        with:
+          packages: |
+            pytest
+            requests
+
+      - name: run test
+        working-directory: ./test/cases
+        run: py.test

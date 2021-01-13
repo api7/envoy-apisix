@@ -39,7 +39,7 @@ static_resources:
                           - root.m+
 
               - match:
-                  prefix: "/ip"
+                  prefix: "/ip-blocked"
                 route:
                   cluster: web_service
                 typed_per_filter_config:
@@ -53,6 +53,24 @@ static_resources:
                       - name: ip-restriction
                         conf:
                           whitelist:
+                          - 127.0.0.2
+                          - 113.74.26.106/24
+
+              - match:
+                  prefix: "/ip-allowed"
+                route:
+                  cluster: web_service
+                typed_per_filter_config:
+                  envoy.filters.http.lua:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                    name: entry.lua
+                metadata:
+                  filter_metadata:
+                    envoy.filters.http.lua:
+                      plugins: 
+                      - name: ip-restriction
+                        conf:
+                          blacklist:
                           - 127.0.0.2
                           - 113.74.26.106/24
 

@@ -52,8 +52,6 @@ function _M.run(ctx, plugins)
                 if phase_func then
                     local conf = plugin.conf
                     local status, body = phase_func(conf, ctx)
-                    handle:logWarn("phase_name:" .. phase_name)
-                    handle:logWarn("status" .. status)
                     if status then
                         handle:logWarn("resp")
                         if type(body) == "table" then
