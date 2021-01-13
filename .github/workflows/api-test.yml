@@ -1,4 +1,4 @@
-name: CLI Test
+name: API Test
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  run-test:
+  api-test:
     runs-on: ubuntu-latest
 
     steps:
