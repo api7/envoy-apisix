@@ -31,12 +31,13 @@ date: Wed, 18 Nov 2020 00:08:54 GMT
 
 # Plugins
 
-* [redirect](plugins/redirect.md): URI redirect.
-* [referer-restriction](plugins/referer-restriction.md): Referer whitelist.
-* [uri-blocker](plugins/uri-blocker.md): Block client request by URI.
+* [redirect](docs/plugins/redirect.md): URI redirect.
+* [referer-restriction](docs/plugins/referer-restriction.md): Referer whitelist.
+* [uri-blocker](docs/plugins/uri-blocker.md): Block client request by URI.
+* [ip-restriction](docs/plugins/ip-restriction.md): Restrict access by IP addresses.
 
 
-# How does it works
+# How does it work
 
 We shield platform differences for the plugin layer. All interfaces that need to be used are abstracted in the underlying framework, which we call apisix.core, so that all plugins can run on Envoy and Apache APISIX at the same time.
 
