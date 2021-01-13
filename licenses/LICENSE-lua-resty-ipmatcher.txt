@@ -199,22 +199,3 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
-========================================================================
-MIT licenses
-========================================================================
-
-The following components are provided under the MIT License. See project link for details.
-The text of each license is also included at licenses/LICENSE-[project].txt.
-
-   files from golgote/neturl: https://github.com/golgote/neturl MIT
-
-========================================================================
-Apache 2.0 licenses
-========================================================================
-
-The following components are provided under the Apache License. See project link for details.
-The text of each license is the standard Apache 2.0 license.
-
-   files from envoyproxy/envoy: https://github.com/envoyproxy/envoy  Apache 2.0
-   files from api7/lua-resty-ipmatcher: https://github.com/api7/lua-resty-ipmatcher  Apache 2.0
